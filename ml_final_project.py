@@ -1,28 +1,66 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from pandas import json_normalize
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
 
-sleep1=pd.read_json('/content/2023-08-03_2023-11-11_107145992_sleepData.json')
-sleep2=pd.read_json('/content/2023-01-15_2023-04-25_107145992_sleepData.json')
-sleep3=pd.read_json('/content/2023-04-25_2023-08-03_107145992_sleepData.json')
-sleep4=pd.read_json('/content/2022-10-07_2023-01-15_107145992_sleepData.json')
-merged_sleep_data = pd.concat([sleep1, sleep2, sleep3, sleep4])
+df = pd.read_csv("data/cleaned/final_data.csv")
+df.drop(columns=["calendarDate"], inplace=True)
 
-sleep_scores_expanded = json_normalize(merged_sleep_data['sleepScores'])
-merged_sleep_data = merged_sleep_data.drop('sleepScores', axis=1)
-final_df = merged_sleep_data.join(sleep_scores_expanded)
-final_df.to_csv('merged_sleep_data.csv', index=False)
+# Check for NaN values
+if df.isna().sum().sum() > 0:
+    # Handling NaN values - fill with the median
+    df.fillna(df.median(), inplace=True)
 
-pd.set_option('display.max_columns', None)
-sleep=pd.read_csv('/content/merged_sleep_data.csv')
-sleep = sleep.drop(['sleepWindowConfirmationType', 'unmeasurableSeconds','retro','avgSleepStress','spo2SleepSummary','feedback','insight'], axis=1)
-sleep=sleep.sort_values(by='calendarDate')
-sleep
+# Check for Inf/-Inf values
+if not np.all(np.isfinite(df)):
+    # Replace Inf/-Inf with NaN, then handle NaNs as above
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.fillna(df.median(), inplace=True)
 
-sleep['deepSleepSeconds'] = pd.to_timedelta(sleep['deepSleepSeconds'], unit='S')
-sleep[['lightSleepSeconds', 'remSleepSeconds','awakeSleepSeconds']]=sleep[['lightSleepSeconds', 'remSleepSeconds','awakeSleepSeconds']].apply(lambda x: pd.to_timedelta(x, unit='S'))
-sleep=sleep.rename(columns={"deepSleepSeconds": "deepSleepHours", "lightSleepSeconds": "lightSleepHours", "remSleepSeconds": "remSleepHours","awakeSleepSeconds": "awakeSleepHours"})
-sleep['totalSleepHours']= sleep['deepSleepHours'] + sleep['lightSleepHours'] + sleep['remSleepHours'] + sleep['awakeSleepHours']
-sleep
+
+# Select features and target variable
+X = df[
+    [
+        "totalSteps",
+        "highlyActiveSeconds",
+        "moderateIntensityMinutes",
+        "vigorousIntensityMinutes",
+        "minHeartRate",
+        "maxHeartRate",
+        "restingHeartRate",
+        "currentDayRestingHeartRate",
+        "hrvWeeklyAverage",
+        "deepSleepHours",
+        "lightSleepHours",
+        "remSleepHours",
+        "awakeSleepHours",
+        "totalSleepHours",
+        # "overallScore",
+        # "qualityScore",
+    ]
+]
+y = df["overallScore"]
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Scale the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Model training
+model = RandomForestRegressor(random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Model evaluation
+y_pred = model.predict(X_test_scaled)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse}")
+print(f"R^2 Score: {r2}")
