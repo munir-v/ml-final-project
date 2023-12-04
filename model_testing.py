@@ -28,7 +28,7 @@ X = df[
         "vigorousIntensityMinutes",
         "minHeartRate",
         "maxHeartRate",
-        "restingHeartRate",
+        # "restingHeartRate",
         # "currentDayRestingHeartRate",
         "hrvWeeklyAverage",
         "deepSleepHours",
