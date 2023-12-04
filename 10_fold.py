@@ -1,12 +1,11 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import KFold, cross_val_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import make_scorer, mean_squared_error, r2_score
 from sklearn.feature_selection import RFECV
 
 df = pd.read_csv("data/cleaned/final_data.csv")
