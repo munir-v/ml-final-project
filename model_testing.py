@@ -20,21 +20,33 @@ X = df[
     [
         "totalSteps",
         "highlyActiveSeconds",
+        "activeSeconds",
+        "moderateIntensityMinutes",
+        "minAvgHeartRate",
+        "maxAvgHeartRate",
         "moderateIntensityMinutes",
         "vigorousIntensityMinutes",
         "minHeartRate",
         "maxHeartRate",
         "restingHeartRate",
-        "currentDayRestingHeartRate",
+        # "currentDayRestingHeartRate",
         "hrvWeeklyAverage",
         "deepSleepHours",
         "lightSleepHours",
         "remSleepHours",
         "awakeSleepHours",
         "totalSleepHours",
+        "overallScore",
+        "qualityScore",
+        "averageRespiration",
+        "lowestRespiration",
+        "highestRespiration",
+        "awakeCount",
+        "avgSleepStress",
+        "restlessMomentCount",
     ]
 ]
-y = df["overallScore"]
+y = df["currentDayRestingHeartRate"]
 
 # Split the data
 X_train, X_test, y_train, y_test = train_test_split(
