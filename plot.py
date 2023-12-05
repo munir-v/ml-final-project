@@ -18,7 +18,34 @@ df.replace([np.inf, -np.inf], np.nan, inplace=True)
 df.fillna(df.median(), inplace=True)
 
 # Select features and target variable
-X = df[["totalSteps", "highlyActiveSeconds", "activeSeconds", "moderateIntensityMinutes", "minAvgHeartRate", "maxAvgHeartRate", "moderateIntensityMinutes", "vigorousIntensityMinutes", "minHeartRate", "maxHeartRate", "hrvWeeklyAverage", "deepSleepHours", "lightSleepHours", "remSleepHours", "awakeSleepHours", "totalSleepHours", "overallScore", "qualityScore", "averageRespiration", "lowestRespiration", "highestRespiration", "awakeCount", "avgSleepStress", "restlessMomentCount"]]
+X = df[
+    [
+        "totalSteps",
+        "highlyActiveSeconds",
+        "activeSeconds",
+        "moderateIntensityMinutes",
+        "minAvgHeartRate",
+        "maxAvgHeartRate",
+        "moderateIntensityMinutes",
+        "vigorousIntensityMinutes",
+        "minHeartRate",
+        "maxHeartRate",
+        "hrvWeeklyAverage",
+        "deepSleepHours",
+        "lightSleepHours",
+        "remSleepHours",
+        "awakeSleepHours",
+        "totalSleepHours",
+        "overallScore",
+        "qualityScore",
+        "averageRespiration",
+        "lowestRespiration",
+        "highestRespiration",
+        "awakeCount",
+        "avgSleepStress",
+        "restlessMomentCount",
+    ]
+]
 y = df["currentDayRestingHeartRate"]
 
 # Scale the features
@@ -51,7 +78,9 @@ kf = KFold(n_splits=10, shuffle=True, random_state=47)
 model_r2_scores = {}
 
 for name, model in models.items():
-    r2_scores = cross_val_score(model, X_scaled[:, selector.support_], y, cv=kf, scoring='r2')
+    r2_scores = cross_val_score(
+        model, X_scaled[:, selector.support_], y, cv=kf, scoring="r2"
+    )
     model_r2_scores[name] = r2_scores
     print(f"{name} - Average R^2: {np.mean(r2_scores)}")
 
@@ -59,8 +88,8 @@ for name, model in models.items():
 plt.figure(figsize=(15, 10))
 for name, r2_scores in model_r2_scores.items():
     plt.plot(r2_scores, label=name)
-plt.title('R^2 Scores Across 10 Folds for Different Models')
-plt.xlabel('Fold Number')
-plt.ylabel('R^2 Score')
+plt.title("R^2 Scores Across 10 Folds for Different Models")
+plt.xlabel("Fold Number")
+plt.ylabel("R^2 Score")
 plt.legend()
 plt.show()
