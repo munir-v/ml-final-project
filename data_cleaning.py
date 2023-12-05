@@ -1,7 +1,4 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from pandas import json_normalize
 
 hrv1 = pd.read_json("/content/TrainingReadinessDTO_20221128_20230308_107145992.json")

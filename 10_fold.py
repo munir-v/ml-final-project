@@ -15,7 +15,7 @@ df.drop(columns=["calendarDate"], inplace=True)
 df.replace([np.inf, -np.inf], np.nan, inplace=True)
 df.fillna(df.median(), inplace=True)
 
-# Select features and target variable
+# Select features and variable to predict
 X = df[
     [
         "totalSteps",
@@ -50,7 +50,7 @@ y = df["currentDayRestingHeartRate"]
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Feature selection using RFECV
+# Feature selection using recursive feature elimination with cross-validation
 estimator = RandomForestRegressor(random_state=47)
 selector = RFECV(estimator, step=1, cv=KFold(5), scoring="neg_mean_squared_error")
 selector = selector.fit(X_scaled, y)
@@ -59,7 +59,7 @@ selector = selector.fit(X_scaled, y)
 selected_features = X.columns[selector.support_]
 print(f"Selected features: {selected_features}")
 
-# Define models
+# Models to try
 models = {
     "Linear Regression": LinearRegression(),
     "Lasso Regression": Lasso(random_state=47),
@@ -71,7 +71,7 @@ models = {
     "Gradient Boosting": GradientBoostingRegressor(random_state=47),
 }
 
-# Perform 10-Fold Cross-Validation
+# 10-Fold Cross-Validation
 kf = KFold(n_splits=10, shuffle=True, random_state=47)
 for name, model in models.items():
     scores = cross_val_score(
