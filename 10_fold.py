@@ -11,7 +11,7 @@ from sklearn.feature_selection import RFECV
 df = pd.read_csv("data/cleaned/final_data.csv")
 df.drop(columns=["calendarDate"], inplace=True)
 
-# Handling NaN and Inf values
+# Handling nan and inf values
 df.replace([np.inf, -np.inf], np.nan, inplace=True)
 df.fillna(df.median(), inplace=True)
 
@@ -71,7 +71,7 @@ models = {
     "Gradient Boosting": GradientBoostingRegressor(random_state=47),
 }
 
-# 10-Fold Cross-Validation
+# 10-fold cross-validation
 kf = KFold(n_splits=10, shuffle=True, random_state=47)
 for name, model in models.items():
     scores = cross_val_score(
