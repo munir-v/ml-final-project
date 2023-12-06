@@ -54,6 +54,8 @@ X_scaled = scaler.fit_transform(X)
 estimator = RandomForestRegressor(random_state=47)
 selector = RFECV(estimator, step=1, cv=KFold(5), scoring="neg_mean_squared_error")
 selector = selector.fit(X_scaled, y)
+# Features removed: "moderateIntensityMinutes", "averageRespiration", "lowestRespiration", and "awakeCount"
+
 
 # Print the selected features
 selected_features = X.columns[selector.support_]
